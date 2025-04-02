@@ -3,15 +3,11 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NearEvents extends AbsBasePage{
@@ -36,21 +32,22 @@ public class NearEvents extends AbsBasePage{
         return driver.findElement(By.xpath(informationPartlocatorWithNumber));
     }
 
-    public Date dateOfEvent(String dayMounth, String time) throws ParseException {
+    public LocalDateTime dateOfEvent(String dayMounth, String time) {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String dateString = String.format("%s %d %s", dayMounth, currentYear, time);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy HH:mm", new Locale("ru"));
-        return sdf.parse(dateString);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm", new Locale("ru"));
+        return LocalDateTime.parse(dateString, formatter);
     }
-    public void eventDаteCheck() throws ParseException {
-        Date currentDate = new Date();
+
+    public void eventDаteCheck() {
+        LocalDateTime currentDate = LocalDateTime.now();  // NEW
         for (int i = 1; i < numberOfEvents()*2; i += 2) {
-            String date =elementNumber(i, dateText).getText();
+            String date = elementNumber(i, dateText).getText();
             String time = elementNumber(i+1, dateText).getText();
-            assert dateOfEvent(date, time).after(currentDate) :
+            assert dateOfEvent(date, time).isAfter(currentDate) :  // NEW: isAfter вместо after
                     String.format("Событие %d-%d (%s %s) уже прошло. Текущая дата: %s",
                             i, i+1, date, time, currentDate);
-         }
+        }
     }
     private By typeSelectorList = By.xpath("(//*[text()='Все мероприятия'])[1]");
     private By typeSelector = By.xpath("(//a[@title='Все мероприятия'])[1]");
