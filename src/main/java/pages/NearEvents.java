@@ -40,11 +40,11 @@ public class NearEvents extends AbsBasePage{
     }
 
     public void eventDаteCheck() {
-        LocalDateTime currentDate = LocalDateTime.now();  // NEW
+        LocalDateTime currentDate = LocalDateTime.now(); 
         for (int i = 1; i < numberOfEvents()*2; i += 2) {
             String date = elementNumber(i, dateText).getText();
             String time = elementNumber(i+1, dateText).getText();
-            assert dateOfEvent(date, time).isAfter(currentDate) :  // NEW: isAfter вместо after
+            assert dateOfEvent(date, time).isAfter(currentDate) :  
                     String.format("Событие %d-%d (%s %s) уже прошло. Текущая дата: %s",
                             i, i+1, date, time, currentDate);
         }
